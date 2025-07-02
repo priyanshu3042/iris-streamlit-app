@@ -1,7 +1,4 @@
-# ✅ STEP 1: Install required packages
-
-
-# ✅ STEP 2: Write Streamlit app code to app.py
+# ✅ STEP 1: Write Streamlit app code to app.py
 import streamlit as st
 from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
@@ -55,7 +52,7 @@ ax2.legend()
 st.pyplot(fig2)
 
 
-# ✅ STEP 3: Launch Streamlit with Ngrok tunnel
+# ✅ STEP 2: Launch Streamlit with Ngrok tunnel
 from pyngrok import ngrok
 import threading
 import time
