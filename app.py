@@ -64,7 +64,7 @@ import time
 !pkill streamlit
 
 # Start ngrok tunnel
-!ngrok config add-authtoken 2zJVxgTKvaBf2Y6X0khteNpm9cs_7ZQogzZJJWjwU1rWfA7cu
+
 public_url = ngrok.connect(8501)
 print(f"🌐 Your Streamlit app is live at: {public_url}")
 
