@@ -1,4 +1,3 @@
-# ✅ STEP 1: Write Streamlit app code to app.py
 import streamlit as st
 from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
@@ -7,65 +6,51 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Load data and train
+# Load and prepare data
 iris = load_iris()
 X, y = iris.data, iris.target
+df = pd.DataFrame(X, columns=iris.feature_names)
+df['species'] = pd.Categorical.from_codes(y, iris.target_names)
+
+# Train model
 model = RandomForestClassifier()
 model.fit(X, y)
 
-df = pd.DataFrame(X, columns=iris.feature_names)
-df["species"] = pd.Categorical.from_codes(y, iris.target_names)
+# Streamlit App UI
+st.title("🌸 Iris Flower Species Predictor")
+st.write("This app predicts the species of an Iris flower based on user input.")
 
-# Sidebar sliders
-st.sidebar.header("Input Flower Features")
+# Sidebar for input features
+st.sidebar.header("Input Features")
 inputs = {feat: st.sidebar.slider(feat, float(df[feat].min()), float(df[feat].max()), float(df[feat].mean()))
           for feat in iris.feature_names}
-input_array = np.array([list(inputs.values())]).reshape(1, -1)
+input_array = np.array([list(inputs.values())])
 
-# Show input values
-st.subheader("🌸 Your Input Features")
-st.write(inputs)
+# Display user input
+st.subheader("🔍 Your Inputs")
+st.write(pd.DataFrame(input_array, columns=iris.feature_names))
 
-# Prediction
+# Predict
 probs = model.predict_proba(input_array)[0]
-pred = iris.target_names[np.argmax(probs)]
-st.subheader("✨ Prediction")
-st.success(f"**{pred.capitalize()}** with {probs.max()*100:.2f}% confidence")
+predicted_class = iris.target_names[np.argmax(probs)]
+st.subheader("🌼 Prediction")
+st.success(f"**Predicted Species:** {predicted_class.capitalize()} with {probs.max()*100:.2f}% confidence")
 
-# Visualization: Probability bar chart
+# Confidence bar chart
 st.subheader("📊 Prediction Confidence")
-prob_df = pd.DataFrame({"species": iris.target_names, "probability": probs})
+prob_df = pd.DataFrame({"Species": iris.target_names, "Probability": probs})
 fig1, ax1 = plt.subplots()
-sns.barplot(data=prob_df, x="species", y="probability", palette="viridis", ax=ax1)
+sns.barplot(data=prob_df, x="Species", y="Probability", palette="viridis", ax=ax1)
 ax1.set_ylim(0, 1)
 st.pyplot(fig1)
 
-# Visualization: Where input sits in feature space
-st.subheader("📌 Input Feature Placement")
-selected_feature = st.selectbox("Feature to plot vs Others", iris.feature_names, index=2)
+# Scatter plot for placement
+st.subheader("📌 Feature Placement")
+selected_feature = st.selectbox("Feature to compare", iris.feature_names, index=2)
+next_feature = iris.feature_names[(iris.feature_names.index(selected_feature)+1)%4]
 fig2, ax2 = plt.subplots()
-sns.scatterplot(data=df, x=selected_feature, y=iris.feature_names[(iris.feature_names.index(selected_feature)+1)%4],
-                hue="species", palette="deep", ax=ax2, alpha=0.6)
-ax2.scatter(inputs[selected_feature], inputs[iris.feature_names[(iris.feature_names.index(selected_feature)+1)%4]],
-            c="black", s=100, label="Your Input")
+sns.scatterplot(data=df, x=selected_feature, y=next_feature, hue="species", palette="deep", alpha=0.6, ax=ax2)
+ax2.scatter(inputs[selected_feature], inputs[next_feature], color="black", s=100, label="Your Input")
 ax2.legend()
 st.pyplot(fig2)
 
-
-# ✅ STEP 2: Launch Streamlit with Ngrok tunnel
-from pyngrok import ngrok
-import threading
-import time
-
-# Start ngrok tunnel
-
-public_url = ngrok.connect(8501)
-print(f"🌐 Your Streamlit app is live at: {public_url}")
-
-# Run Streamlit app in background
-def run():
-    os.system('streamlit run app.py')
-
-thread = threading.Thread(target=run)
-thread.start()
-time.sleep(5)
