@@ -1,5 +1,5 @@
 # ✅ STEP 1: Install required packages
-pip install -q streamlit scikit-learn pyngrok
+
 
 # ✅ STEP 2: Write Streamlit app code to app.py
 import streamlit as st
