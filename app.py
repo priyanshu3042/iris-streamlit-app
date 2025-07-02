@@ -58,7 +58,7 @@ import threading
 import time
 
 # Kill any running Streamlit processes
-!pkill streamlit
+pkill streamlit
 
 # Start ngrok tunnel
 
