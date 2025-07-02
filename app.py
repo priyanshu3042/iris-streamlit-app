@@ -57,9 +57,6 @@ from pyngrok import ngrok
 import threading
 import time
 
-# Kill any running Streamlit processes
-pkill streamlit
-
 # Start ngrok tunnel
 
 public_url = ngrok.connect(8501)
